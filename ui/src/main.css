@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme {
+  --color-assitant: #bfd9c4;
+  --color-user: #bfd9d5;
+}

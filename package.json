@@ -1,0 +1,7 @@
+{
+  "name": "language-partner",
+  "workspaces": [
+    "ui",
+    "api"
+  ]
+}

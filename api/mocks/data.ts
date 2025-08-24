@@ -1,4 +1,5 @@
 import type {
+  GetConversationsByLessonIdResponseBody,
   GetLessonsResponseBody,
   PostSpeechMessageResponseBody,
   PostTranscriptionResponseBody,
@@ -36,3 +37,17 @@ export const getLessonsMock: GetLessonsResponseBody = [
     name: "Lesson bar",
   },
 ];
+
+export const getConversationsByLessonIdMock: GetConversationsByLessonIdResponseBody =
+  [
+    {
+      id: "foo",
+      lessonId: "some-lesson-id",
+      content: "Hi!\nBye!",
+    },
+    {
+      id: "bar",
+      lessonId: "some-lesson-id",
+      content: "Hi!\nBye!\nHi again!",
+    },
+  ];

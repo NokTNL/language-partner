@@ -3,9 +3,10 @@ export default async function smartFetch<ResponseBody>(
   options?: RequestInit
 ): Promise<ResponseBody> {
   const response = await fetch(url, options);
-  const responseJson = (await response.json()) as ResponseBody;
   if (!response.ok) {
-    throw new Error(`Error in smartFetch: ${responseJson}`);
+    throw new Error(`Error in smartFetch`);
   }
-  return responseJson;
+  // TODO: fix failed to parse JSON when status is 204
+  const responseData = (await response.json().catch(() => {})) as ResponseBody;
+  return responseData;
 }

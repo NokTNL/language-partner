@@ -24,7 +24,8 @@ app.use(lessonsRoute);
 
 const server = app.listen(3156);
 
-// Backup database when reloading
+// TODO: remove this when added UI database editing functionality
+// Backup database in home directory when reloading
 process.on("SIGTERM", () => {
   server.close(async () => {
     await fs.mkdir(path.resolve(os.homedir(), "langauge-partner-backup"), {

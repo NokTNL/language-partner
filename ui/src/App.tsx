@@ -1,19 +1,17 @@
 import { useRef, useState } from "react";
-import type { Message } from "./types/Message";
-import Button from "./components/Button.tsx";
+import type { Message } from "./types/message";
+import Button from "./common/Button.tsx";
 import classNames from "classnames";
 import usePostSpeech from "./hooks/usePostSpeech";
 import usePostTranscription from "./hooks/usePostTranscription";
-import useGetLessons from "./hooks/useGetLessons.ts";
+import WelcomeView from "./components/WelcomeView.tsx";
 
 let recorder: MediaRecorder | undefined;
 
 function App() {
-  // TODO: Error state
-  const { data: lessons } = useGetLessons();
   const postSpeechMutation = usePostSpeech();
   const postTranscriptionMutation = usePostTranscription();
-  const [selectedLessons, setSelectedLessons] = useState<string[]>([]);
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [hasStartedLesson, setHasStartedLesson] = useState(false);
@@ -23,6 +21,7 @@ function App() {
     "record" | "retry" | undefined
   >(undefined);
   const isRecordingCancelledRef = useRef(false);
+  const selectedLessonsRef = useRef<string[]>([]);
 
   const handleSendUserInput = async (userInput?: string) => {
     setApiErrorMode(undefined);
@@ -36,7 +35,7 @@ function App() {
       const responseData = await postSpeechMutation.mutateAsync({
         previous_response_id: lastAssistantMessage?.id,
         user_input: userInput,
-        lessons: selectedLessons,
+        lessons: selectedLessonsRef.current,
       });
       setMessages((prev) =>
         prev.concat({
@@ -65,7 +64,8 @@ function App() {
     handleSendUserInput(lastUserInput);
   };
 
-  const handleStartLesson = () => {
+  const handleStartLesson = (lessonIds: string[]) => {
+    selectedLessonsRef.current = lessonIds;
     setHasStartedLesson(true);
     handleSendUserInput();
   };
@@ -75,15 +75,6 @@ function App() {
     setMessages([]);
     setHasStartedLesson(false);
   };
-
-  const handleSelectLesson =
-    (lessonId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.checked) {
-        setSelectedLessons((prev) => [...prev, lessonId]);
-      } else {
-        setSelectedLessons((prev) => prev.filter((id) => id !== lessonId));
-      }
-    };
 
   const handleFinishRecord = () => {
     recorder?.stop();
@@ -222,37 +213,7 @@ function App() {
       </div>
     </div>
   ) : (
-    <div className="w-dvw h-dvh p-4 flex flex-col">
-      <div className="grow-1 flex flex-col justify-center items-center ">
-        {lessons ? (
-          <div className="flex flex-col gap-6">
-            <h2 className="font-semibold text-xl">
-              Select the lessons you want to practice:
-            </h2>
-            <div className="flex flex-col gap-3">
-              {lessons.map((lesson) => (
-                <div key={lesson.id} className="flex items-center gap-4">
-                  <input
-                    className="size-5"
-                    type="checkbox"
-                    id={`lesson-${lesson.id}`}
-                    onChange={handleSelectLesson(lesson.id)}
-                  />
-                  <label className="text-lg" htmlFor={`lesson-${lesson.id}`}>
-                    {lesson.name}
-                  </label>
-                </div>
-              ))}
-            </div>
-            <Button onClick={handleStartLesson} className="mt-2">
-              Start the lesson
-            </Button>
-          </div>
-        ) : (
-          <p>Loading...</p>
-        )}
-      </div>
-    </div>
+    <WelcomeView handleStartLesson={handleStartLesson} />
   );
 }
 

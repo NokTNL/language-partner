@@ -21,6 +21,7 @@ export function dbInit() {
       )`
   ).run();
 
+  // TODO: delete this once UI is done
   // Adding a new lesson
   // db.prepare<[string, string]>(`INSERT INTO lesson VALUES (?,?)`).run(
   //   crypto.randomUUID(),

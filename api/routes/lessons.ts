@@ -7,10 +7,7 @@ import {
   type PostLessonResponseBody,
 } from "../types/api.ts";
 import { IS_MOCK_MODE } from "../config.ts";
-import {
-  getConversationsByLessonIdMock,
-  getLessonsMock,
-} from "../mocks/data.ts";
+import { getLessonByIdMock, getLessonsMock } from "../mocks/data.ts";
 import delay from "../mocks/delay.ts";
 import {
   createLesson,
@@ -37,11 +34,11 @@ router.get<{}, GetLessonsResponseBody | string>(
 );
 
 router.get<{ lessonId: string }, GetLessonByIdResponseBody | string>(
-  "/lessons/:lessonId/conversations",
+  "/lessons/:lessonId",
   async (req, res) => {
     if (IS_MOCK_MODE) {
       await delay(500);
-      return res.json(getConversationsByLessonIdMock);
+      return res.json(getLessonByIdMock);
     }
 
     const { lessonId } = req.params;
@@ -70,9 +67,9 @@ router.post<{}, string | PostLessonResponseBody, unknown>(
       });
     }
 
-    const { name, content } = SPostLessonRequestBody.parse(req.body);
+    const { name, conversations } = SPostLessonRequestBody.parse(req.body);
 
-    const lessonId = createLesson(name, content);
+    const lessonId = createLesson(name, conversations);
 
     return res.status(201).json({ id: lessonId });
   }
@@ -89,9 +86,9 @@ router.put<{ lessonId: string }, string, unknown>(
     const { lessonId } = req.params;
     if (!lessonId) return res.status(400).send("No lessonId");
 
-    const { name, content } = SPutLessonRequestBody.parse(req.body);
+    const { name, conversations } = SPutLessonRequestBody.parse(req.body);
 
-    updateLesson(lessonId, name, content);
+    updateLesson(lessonId, name, conversations);
 
     return res.status(204).send();
   }

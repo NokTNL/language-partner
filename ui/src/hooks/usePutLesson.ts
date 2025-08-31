@@ -9,13 +9,13 @@ export default function usePutLesson() {
     mutationFn: async ({
       lessonId,
       name,
-      content,
+      conversations,
     }: {
       lessonId: string;
       name: string;
-      content: string[];
+      conversations: string[];
     }) => {
-      const body: PutLessonRequestBody = { name, content };
+      const body: PutLessonRequestBody = { name, conversations };
       return smartFetch<string>(`${API_BASE_URL}/lessons/${lessonId}`, {
         method: "PUT",
         headers: {

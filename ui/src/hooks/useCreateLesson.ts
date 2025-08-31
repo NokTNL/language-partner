@@ -6,17 +6,17 @@ import type {
   PostLessonResponseBody,
 } from "../../../api/types/api";
 
-export default function useCreateLesson() {
+export default function usePostLesson() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
       name,
-      content,
+      conversations,
     }: {
       name: string;
-      content: string[];
+      conversations: string[];
     }) => {
-      const requestBody: PostLessonRequestBody = { name, content };
+      const requestBody: PostLessonRequestBody = { name, conversations };
       const responseBody = await smartFetch<PostLessonResponseBody>(
         `${API_BASE_URL}/lessons`,
         {

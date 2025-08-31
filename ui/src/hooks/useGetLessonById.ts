@@ -12,14 +12,12 @@ const concatContentDto = (data: GetLessonByIdResponseBody) => {
   };
 };
 
-export default function useGetConversationsByLessonId(
-  lessonId?: string | undefined
-) {
+export default function useGetLessonById(lessonId?: string | undefined) {
   return useQuery({
-    queryKey: ["conversationsByLessonId", lessonId],
+    queryKey: ["lessonById", lessonId],
     queryFn: () =>
       smartFetch<GetLessonByIdResponseBody>(
-        `${API_BASE_URL}/lessons/${lessonId}/conversations`
+        `${API_BASE_URL}/lessons/${lessonId}`
       ),
     select: concatContentDto,
     enabled: Boolean(lessonId),

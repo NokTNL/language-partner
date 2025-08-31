@@ -39,7 +39,7 @@ export type GetLessonByIdResponseBody = {
 
 export const SPostLessonRequestBody = z.object({
   name: z.string().nonempty(),
-  content: z.array(z.string().nonempty()).nonempty(),
+  conversations: z.array(z.string().nonempty()).min(1),
 });
 
 export type PostLessonRequestBody = z.infer<typeof SPostLessonRequestBody>;
@@ -50,7 +50,7 @@ export type PostLessonResponseBody = {
 
 export const SPutLessonRequestBody = z.object({
   name: z.string().nonempty(),
-  content: z.array(z.string().nonempty()).nonempty(),
+  conversations: z.array(z.string().nonempty()).min(1),
 });
 
 export type PutLessonRequestBody = z.infer<typeof SPutLessonRequestBody>;

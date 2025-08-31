@@ -105,14 +105,12 @@ export default function WelcomeView({ handleStartLesson }: WelcomeViewProps) {
           <p>Loading...</p>
         )}
       </div>
-      <div className="p-4 grow-1">
-        <LessonForm
-          mode={lessonFormMode}
-          editingLessonId={editingLessonId}
-          // For when adding a new lesson, we don't want to add another lesson with the same name
-          onSuccessfulSubmission={handleSelectEditLesson}
-        />
-      </div>
+      <LessonForm
+        mode={lessonFormMode}
+        editingLessonId={editingLessonId}
+        // For when adding a new lesson, we don't want to add another lesson with the same name
+        onSuccessfulSubmission={handleSelectEditLesson}
+      />
     </div>
   );
 }

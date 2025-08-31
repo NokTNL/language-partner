@@ -38,7 +38,7 @@ export const getLessonsMock: GetLessonsResponseBody = [
   },
 ];
 
-export const getConversationsByLessonIdMock: GetLessonByIdResponseBody = {
+export const getLessonByIdMock: GetLessonByIdResponseBody = {
   id: "lesson-id",
   name: "lesson-name",
   conversations: [

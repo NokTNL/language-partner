@@ -2,7 +2,7 @@ import { type Language } from "../types/config.ts";
 import {
   assistantStartFirstExample,
   userStartFirstExample,
-} from "./example-dialogs/ru-RU.ts";
+} from "./example-dialogs.ts";
 
 export const getSpeechPrompt = ({
   listOfConversations,

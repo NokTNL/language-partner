@@ -16,7 +16,7 @@ import { getSpeechPrompt } from "../prompts/speech_template.ts";
 import { CHAT_MODEL, IS_MOCK_MODE, LANGUAGE, TEMPERATURE } from "../config.ts";
 import { getChatMessageMock } from "../mocks/data.ts";
 import delay from "../mocks/delay.ts";
-import { getConversationsByLessonId } from "../db/models.ts";
+import { getConversationsByLessonIds } from "../db/models.ts";
 
 const router = express.Router();
 const client = new OpenAI();
@@ -40,7 +40,7 @@ router.post<
         role: isFirstResponse ? "developer" : "user",
         content: isFirstResponse
           ? getSpeechPrompt({
-              listOfConversations: getConversationsByLessonId(lessons).map(
+              listOfConversations: getConversationsByLessonIds(lessons).map(
                 ({ content }) => content
               ),
               langauge: LANGUAGE,

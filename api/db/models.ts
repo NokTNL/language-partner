@@ -8,7 +8,14 @@ export function getLessons() {
   return lessons;
 }
 
-export function getConversationsByLessonId(lessonIds: string[]) {
+export function getLessonById(id: string) {
+  const lesson = db
+    .prepare<string, LessonTable>(`SELECT * FROM lesson WHERE id = ?`)
+    .get(id);
+  return lesson;
+}
+
+export function getConversationsByLessonIds(lessonIds: string[]) {
   const placeholders = lessonIds.map(() => "?").join(",");
   const conversations = db
     .prepare<string[], ConversationTable>(
@@ -16,6 +23,23 @@ export function getConversationsByLessonId(lessonIds: string[]) {
     )
     .all(...lessonIds);
   return conversations;
+}
+
+export function createLesson(name: string, conversations: string[]) {
+  const lessonId = crypto.randomUUID();
+  const tx = db.transaction(() => {
+    db.prepare<[string, string], void>(
+      `INSERT INTO lesson (id, name) VALUES (?,?)`
+    ).run(lessonId, name);
+    const insertStmt = db.prepare<[string, string, string], void>(
+      `INSERT INTO conversation (id, lessonId, content) VALUES (?,?,?)`
+    );
+    for (const convo of conversations) {
+      insertStmt.run(crypto.randomUUID(), lessonId, convo);
+    }
+  });
+  tx();
+  return lessonId;
 }
 
 export function updateLesson(

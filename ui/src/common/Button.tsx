@@ -11,7 +11,7 @@ export default function Button({
   return (
     <button
       className={classNames([
-        "border-1 p-2 rounded-lg font-bold ",
+        "border-1 p-2 rounded-lg font-bold cursor-pointer",
         "not-disabled:active:translate-y-0.5",
         "disabled:text-gray-500 disabled:cursor-not-allowed",
         variant === "outline" && [

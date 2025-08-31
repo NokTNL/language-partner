@@ -22,25 +22,4 @@ app.use(chatRoute);
 app.use(getTranscriptionRoute);
 app.use(lessonsRoute);
 
-const server = app.listen(3156);
-
-// TODO: remove this when added UI database editing functionality
-// Backup database in home directory when reloading
-process.on("SIGTERM", () => {
-  server.close(async () => {
-    await fs.mkdir(path.resolve(os.homedir(), "langauge-partner-backup"), {
-      recursive: true,
-    });
-    await db.backup(
-      path.resolve(
-        os.homedir(),
-        "langauge-partner-backup",
-        `${new Date()
-          .toISOString()
-          .replace(/\.[0-9]{3}Z/g, "")
-          .replace(/[:T]/g, "_")}-database-backup.sqlite`
-      )
-    );
-    console.log("Finished SQLite backup");
-  });
-});
+app.listen(3156);

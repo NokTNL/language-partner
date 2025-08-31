@@ -1,5 +1,5 @@
 import type {
-  GetConversationsByLessonIdResponseBody,
+  GetLessonByIdResponseBody,
   GetLessonsResponseBody,
   PostSpeechMessageResponseBody,
   PostTranscriptionResponseBody,
@@ -38,8 +38,10 @@ export const getLessonsMock: GetLessonsResponseBody = [
   },
 ];
 
-export const getConversationsByLessonIdMock: GetConversationsByLessonIdResponseBody =
-  [
+export const getConversationsByLessonIdMock: GetLessonByIdResponseBody = {
+  id: "lesson-id",
+  name: "lesson-name",
+  conversations: [
     {
       id: "foo",
       lessonId: "some-lesson-id",
@@ -50,4 +52,5 @@ export const getConversationsByLessonIdMock: GetConversationsByLessonIdResponseB
       lessonId: "some-lesson-id",
       content: "Hi!\nBye!\nHi again!",
     },
-  ];
+  ],
+};

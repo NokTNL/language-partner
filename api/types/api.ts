@@ -1,3 +1,4 @@
+import z from "zod";
 import type { ConversationTable } from "./tables.ts";
 
 /**
@@ -30,12 +31,29 @@ export type GetLessonsResponseBody = {
   name: string;
 }[];
 
-export type GetConversationsByLessonIdResponseBody = ConversationTable[];
-
-export type PutLessonRequestBody = {
+export type GetLessonByIdResponseBody = {
+  id: string;
   name: string;
-  content: string[];
+  conversations: ConversationTable[];
 };
+
+export const SPostLessonRequestBody = z.object({
+  name: z.string().nonempty(),
+  content: z.array(z.string().nonempty()).nonempty(),
+});
+
+export type PostLessonRequestBody = z.infer<typeof SPostLessonRequestBody>;
+
+export type PostLessonResponseBody = {
+  id: string;
+};
+
+export const SPutLessonRequestBody = z.object({
+  name: z.string().nonempty(),
+  content: z.array(z.string().nonempty()).nonempty(),
+});
+
+export type PutLessonRequestBody = z.infer<typeof SPutLessonRequestBody>;
 
 /**
  * Components

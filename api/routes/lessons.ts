@@ -1,18 +1,21 @@
 import express from "express";
-import type {
-  GetConversationsByLessonIdResponseBody,
-  GetLessonsResponseBody,
-  PutLessonRequestBody,
+import {
+  SPostLessonRequestBody,
+  SPutLessonRequestBody,
+  type GetLessonByIdResponseBody,
+  type GetLessonsResponseBody,
+  type PostLessonResponseBody,
 } from "../types/api.ts";
-import { IS_MOCK_MODE, LANGUAGE } from "../config.ts";
+import { IS_MOCK_MODE } from "../config.ts";
 import {
   getConversationsByLessonIdMock,
   getLessonsMock,
-  getTranscriptionMock,
 } from "../mocks/data.ts";
 import delay from "../mocks/delay.ts";
 import {
-  getConversationsByLessonId,
+  createLesson,
+  getConversationsByLessonIds,
+  getLessonById,
   getLessons,
   updateLesson,
 } from "../db/models.ts";
@@ -33,24 +36,49 @@ router.get<{}, GetLessonsResponseBody | string>(
   }
 );
 
-router.get<
-  { lessonId: string },
-  GetConversationsByLessonIdResponseBody | string
->("/lessons/:lessonId/conversations", async (req, res) => {
-  if (IS_MOCK_MODE) {
-    await delay(500);
-    return res.json(getConversationsByLessonIdMock);
+router.get<{ lessonId: string }, GetLessonByIdResponseBody | string>(
+  "/lessons/:lessonId/conversations",
+  async (req, res) => {
+    if (IS_MOCK_MODE) {
+      await delay(500);
+      return res.json(getConversationsByLessonIdMock);
+    }
+
+    const { lessonId } = req.params;
+    if (!lessonId) return res.status(400).send("No lessonId");
+
+    const lesson = getLessonById(lessonId);
+    const conversations = getConversationsByLessonIds([lessonId]);
+
+    if (!lesson) return res.status(404).send("No lesson with this lessonId");
+
+    return res.json({
+      id: lesson.id,
+      name: lesson.name,
+      conversations,
+    });
   }
+);
 
-  const { lessonId } = req.params;
-  if (!lessonId) return res.status(400).send("No lessonId");
+router.post<{}, string | PostLessonResponseBody, unknown>(
+  "/lessons",
+  async (req, res) => {
+    if (IS_MOCK_MODE) {
+      await delay(500);
+      return res.status(201).json({
+        id: "new-lesson-id",
+      });
+    }
 
-  const conversations = getConversationsByLessonId([lessonId]);
+    const { name, content } = SPostLessonRequestBody.parse(req.body);
 
-  return res.json(conversations);
-});
+    const lessonId = createLesson(name, content);
 
-router.put<{ lessonId: string }, string, PutLessonRequestBody>(
+    return res.status(201).json({ id: lessonId });
+  }
+);
+
+router.put<{ lessonId: string }, string, unknown>(
   "/lessons/:lessonId",
   async (req, res) => {
     if (IS_MOCK_MODE) {
@@ -59,12 +87,9 @@ router.put<{ lessonId: string }, string, PutLessonRequestBody>(
     }
 
     const { lessonId } = req.params;
-    const { name, content } = req.body;
-    // TODO: zod it
     if (!lessonId) return res.status(400).send("No lessonId");
-    if (!name) return res.status(400).send("Missing name");
-    if (!content || !Array.isArray(content))
-      return res.status(400).send("Missing content array");
+
+    const { name, content } = SPutLessonRequestBody.parse(req.body);
 
     updateLesson(lessonId, name, content);
 

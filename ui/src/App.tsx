@@ -4,7 +4,7 @@ import Button from "./common/Button.tsx";
 import classNames from "classnames";
 import usePostSpeech from "./hooks/usePostSpeech";
 import usePostTranscription from "./hooks/usePostTranscription";
-import WelcomeView from "./components/WelcomeView.tsx";
+import WelcomeView from "./components/WelcomeView/WelcomeView.tsx";
 
 let recorder: MediaRecorder | undefined;
 

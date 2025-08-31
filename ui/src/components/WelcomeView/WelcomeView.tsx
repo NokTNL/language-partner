@@ -7,6 +7,8 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/solid";
 import LessonForm from "./LessonForm";
+import useDeleteLesson from "../../hooks/useDeleteLesson";
+import Spinner from "../../common/Spinner";
 
 type WelcomeViewProps = {
   handleStartLesson: (lessonIds: string[]) => void;
@@ -21,6 +23,8 @@ export default function WelcomeView({ handleStartLesson }: WelcomeViewProps) {
   const [editingLessonId, setEditingLessonId] = useState<string | undefined>(
     undefined
   );
+  const { mutateAsync: deleteLesson, status: deleteLessonQueryStatus } =
+    useDeleteLesson();
 
   const handleSelectLesson =
     (lessonId: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +47,15 @@ export default function WelcomeView({ handleStartLesson }: WelcomeViewProps) {
   const handleAddNewLesson = () => {
     setLessonFormMode("add");
     setEditingLessonId(undefined);
+  };
+
+  const handleDeleteLesson = async (lessonId: string) => {
+    setLessonFormMode(undefined);
+    try {
+      await deleteLesson(lessonId);
+    } catch {
+      // TODO: add error handling
+    }
   };
   return (
     <div className="w-dvw h-dvh flex">
@@ -78,7 +91,14 @@ export default function WelcomeView({ handleStartLesson }: WelcomeViewProps) {
                     {lesson.name}
                   </label>
                   <Button className="invisible group-hover:visible text-red-600 not-disabled:hover:bg-red-600">
-                    <ArchiveBoxXMarkIcon className="size-5" />
+                    {deleteLessonQueryStatus === "pending" ? (
+                      <Spinner className="size-5" />
+                    ) : (
+                      <ArchiveBoxXMarkIcon
+                        className="size-5"
+                        onClick={() => handleDeleteLesson(lesson.id)}
+                      />
+                    )}
                   </Button>
                   <Button
                     className="invisible group-hover:visible"
@@ -105,12 +125,7 @@ export default function WelcomeView({ handleStartLesson }: WelcomeViewProps) {
           <p>Loading...</p>
         )}
       </div>
-      <LessonForm
-        mode={lessonFormMode}
-        editingLessonId={editingLessonId}
-        // For when adding a new lesson, we don't want to add another lesson with the same name
-        onSuccessfulSubmission={handleSelectEditLesson}
-      />
+      <LessonForm mode={lessonFormMode} editingLessonId={editingLessonId} />
     </div>
   );
 }

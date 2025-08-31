@@ -11,6 +11,7 @@ import { getLessonByIdMock, getLessonsMock } from "../mocks/data.ts";
 import delay from "../mocks/delay.ts";
 import {
   createLesson,
+  deleteLesson,
   getConversationsByLessonIds,
   getLessonById,
   getLessons,
@@ -89,6 +90,23 @@ router.put<{ lessonId: string }, string, unknown>(
     const { name, conversations } = SPutLessonRequestBody.parse(req.body);
 
     updateLesson(lessonId, name, conversations);
+
+    return res.status(204).send();
+  }
+);
+
+router.delete<{ lessonId: string }, string, never>(
+  "/lessons/:lessonId",
+  async (req, res) => {
+    if (IS_MOCK_MODE) {
+      await delay(500);
+      return res.status(204).send();
+    }
+
+    const { lessonId } = req.params;
+    if (!lessonId) return res.status(400).send("No lessonId");
+
+    deleteLesson(lessonId);
 
     return res.status(204).send();
   }

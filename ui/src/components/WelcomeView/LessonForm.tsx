@@ -10,14 +10,9 @@ import useGetLessons from "../../hooks/useGetLessons";
 type LessonFormProps = {
   mode: "add" | "edit" | undefined;
   editingLessonId: string | undefined;
-  onSuccessfulSubmission: (lessonId: string) => void;
 };
 
-export default function LessonForm({
-  mode,
-  editingLessonId,
-  onSuccessfulSubmission,
-}: LessonFormProps) {
+export default function LessonForm({ mode, editingLessonId }: LessonFormProps) {
   const { data: lessonsData } = useGetLessons();
   const { data: lessonByIdData } = useGetLessonById(editingLessonId);
   const { mutateAsync: createLesson } = usePostLesson();
@@ -32,6 +27,7 @@ export default function LessonForm({
     handleSubmit,
     subscribe,
     formState: { errors },
+    reset,
   } = useForm<LessonFormValue>({
     values: {
       lessonName: lessonByIdData?.name ?? "",
@@ -46,14 +42,14 @@ export default function LessonForm({
     setSubmissionStatus(undefined);
     try {
       if (mode === "add") {
-        const { id: lessonId } = await createLesson({
+        await createLesson({
           name: lessonName,
           conversations: conversations
             .split("\n\n")
             .filter((convo) => !!convo)
             .map((convo) => convo.trim()),
         });
-        onSuccessfulSubmission(lessonId);
+        reset();
       } else if (mode === "edit" && editingLessonId) {
         await putLesson({
           lessonId: editingLessonId,
@@ -73,6 +69,9 @@ export default function LessonForm({
   // Reset form status when user input data / new lesson is selected
   useEffect(() => {
     const unsbscribe = subscribe({
+      formState: {
+        values: true,
+      },
       callback: () => {
         setSubmissionStatus(undefined);
       },

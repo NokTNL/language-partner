@@ -4,12 +4,21 @@ import getTranscriptionRoute from "./routes/transcription.ts";
 import lessonsRoute from "./routes/lessons.ts";
 import fileUpload from "express-fileupload";
 import cors from "cors";
-import { db, dbInit } from "./db/scripts.ts";
-import path from "path";
-import os from "os";
+import { dbInit } from "./db/scripts.ts";
 import fs from "fs/promises";
+import path from "path";
 
 dbInit();
+// TODO: may not need this if using a server
+// Create `/public` if not already exists, and clean up the folder
+try {
+  await fs.stat(path.resolve("public"));
+} catch {
+  await fs.mkdir(path.resolve("public"));
+}
+for (const file of await fs.readdir(path.resolve("public"))) {
+  await fs.unlink(path.resolve("public", file));
+}
 
 const app = express();
 

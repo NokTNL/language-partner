@@ -27,7 +27,6 @@ router.post<{}, PostTranscriptionResponseBody | string>(
     }
     // TODO: do not store this in public folder path, upload to server instead
     const uploadPath = path.resolve("public", audioFile.name);
-
     await audioFile.mv(uploadPath);
 
     const transcription = await client.audio.transcriptions.create({

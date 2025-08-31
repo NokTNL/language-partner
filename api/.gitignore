@@ -1,5 +1,4 @@
 # TODO: do not need these once not storing that in public folder
-public/*.mp3
-public/*.webm
+/public/
 
 *.sqlite*

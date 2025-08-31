@@ -71,7 +71,8 @@ router.post<
         const fileName = `${new Date()
           .toISOString()
           .replace(/\D/g, "")}${crypto.randomUUID()}.mp3`;
-        const fileFullPath = path.resolve(`public/${fileName}`);
+        // TODO: this needs to be moved to a server eventually
+        const fileFullPath = path.resolve("public", fileName);
         const mp3 = await client.audio.speech.create({
           model: "gpt-4o-mini-tts",
           voice: entry.attributes.gender === "male" ? "verse" : "nova",

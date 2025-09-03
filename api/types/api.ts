@@ -4,11 +4,14 @@ import type { ConversationTable } from "./tables.ts";
 /**
  * Chat routes
  */
-export type PostSpeechMessageRequestBody = {
-  previous_response_id?: string;
-  user_input?: string;
-  lessons: string[];
-};
+export const SPostSpeechMessageRequestBody = z.object({
+  previous_response_id: z.string().optional(),
+  user_input: z.string().optional(),
+  lessons: z.array(z.string().uuid()).min(1),
+});
+export type PostSpeechMessageRequestBody = z.infer<
+  typeof SPostSpeechMessageRequestBody
+>;
 
 export type PostSpeechMessageResponseBody = {
   id: string;

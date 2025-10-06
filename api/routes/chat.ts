@@ -18,6 +18,7 @@ import { CHAT_MODEL, IS_MOCK_MODE, LANGUAGE, TEMPERATURE } from "../config.ts";
 import { getChatMessageMock } from "../mocks/data.ts";
 import delay from "../mocks/delay.ts";
 import { getConversationsByLessonIds } from "../db/models.ts";
+import { API_BASE_URL } from "../constants.ts";
 
 const router = express.Router();
 const client = new OpenAI();
@@ -101,7 +102,7 @@ router.post<{}, PostSpeechMessageResponseBody | string, unknown>(
       entries: responseWithFilePaths.map(({ audioFilePath, content }) => {
         return {
           type: "audio",
-          src: `http://localhost:3156/${audioFilePath}`,
+          src: `${API_BASE_URL}/${audioFilePath}`,
           transcription: content,
         };
       }),

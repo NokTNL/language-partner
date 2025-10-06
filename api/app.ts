@@ -7,6 +7,9 @@ import cors from "cors";
 import { dbInit } from "./db/scripts.ts";
 import fs from "fs/promises";
 import path from "path";
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".." });
 
 dbInit();
 // TODO: may not need this if using a server

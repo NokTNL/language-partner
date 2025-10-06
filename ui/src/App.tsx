@@ -5,6 +5,7 @@ import classNames from "classnames";
 import usePostSpeech from "./hooks/usePostSpeech";
 import usePostTranscription from "./hooks/usePostTranscription";
 import WelcomeView from "./components/WelcomeView/WelcomeView.tsx";
+import mime from "mime/lite";
 
 let recorder: MediaRecorder | undefined;
 
@@ -102,6 +103,7 @@ function App() {
     };
 
     recorder.onstop = async () => {
+      const recorderDefined = recorder!; // recorder must be defined at this point
       if (isRecordingCancelledRef.current === true) {
         chunks = [];
         isRecordingCancelledRef.current = false;
@@ -109,7 +111,7 @@ function App() {
         return;
       }
       stream.getAudioTracks().forEach((track) => track.stop());
-      const blob = new Blob(chunks, { type: recorder?.mimeType });
+      const blob = new Blob(chunks, { type: recorderDefined.mimeType });
       const url = URL.createObjectURL(blob);
 
       // Get transcript of audio
@@ -117,7 +119,10 @@ function App() {
       formData.append(
         "audio",
         blob,
-        `${new URL(new URL(url).pathname).pathname.replaceAll("/", "")}.webm`
+        `${new URL(new URL(url).pathname).pathname.replaceAll(
+          "/",
+          ""
+        )}.${mime.getExtension(recorderDefined.mimeType)}`
       );
 
       try {

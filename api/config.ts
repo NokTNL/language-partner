@@ -14,7 +14,7 @@ export const LANGUAGE: Language = {
  * Advanced usage; these affects the generated responses from the chat model
  */
 
-export const CHAT_MODEL = "gpt-4.1";
+export const CHAT_MODEL = "gpt-5";
 export const TEMPERATURE = 1;
 
 /**
